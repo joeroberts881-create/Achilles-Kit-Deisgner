@@ -1,10 +1,10 @@
 /* main.js — state, boot, UI event handlers */
 
 var S = {
-  colA: '#e8e8e8',  // body
-  colB: '#1a2e6e',  // sleeves
-  colC: '#c8102e',  // sleeve cuff
-  colD: '#1a2e6e',  // collar
+  colA: '#e8e8e8',
+  colB: '#1a2e6e',
+  colC: '#c8102e',
+  colD: '#1a2e6e',
   style: 'solid',
   view:  'front',
   shirt: 'vneck',
@@ -62,7 +62,8 @@ function setView(v) {
   S.view = v;
   document.getElementById('vFront').classList.toggle('on', v === 'front');
   document.getElementById('vBack').classList.toggle('on',  v === 'back');
-  var T = window.SHIRTS[S.shirt + '_' + v];
+  var key = S.shirt + '_' + v;
+  var T = window.SHIRTS[key];
   if (T) {
     document.getElementById('shirtImg').src = T.src;
     document.getElementById('colourSvg').setAttribute('viewBox', '0 0 ' + T.w + ' ' + T.h);
@@ -71,5 +72,5 @@ function setView(v) {
   redraw();
 }
 
-// Boot
+/* Boot — scripts are at bottom of <body> so DOM and all other scripts are ready */
 setView('front');
