@@ -14,7 +14,7 @@ function redraw() {
   var colSvg = document.getElementById('colourSvg');
   var logSvg = document.getElementById('logosSvg');
   var z = T.zones, W = T.w, H = T.h;
-  var pA = S.colA, pB = S.colB, pC = S.colC, pD = S.colD;
+  var pA = S.colA, pB = S.colB, pC = S.colC, pD = S.colD, pE = S.colE;
   var tCol   = luma(pA) > 145 ? 'rgba(0,0,0,0.78)'   : 'rgba(255,255,255,0.9)';
   var tFaint = luma(pA) > 145 ? 'rgba(0,0,0,0.12)'   : 'rgba(255,255,255,0.18)';
 
@@ -24,7 +24,7 @@ function redraw() {
   if (activePattern) {
     // Use pattern's own rules, or fall back to zone patternZones
     var rules = activePattern.rules || z.patternZones || ['body'];
-    var patSvg = activePattern.render(pB, W, H);
+    var patSvg = activePattern.render(pE, W, H);
     rules.forEach(function(zk) {
       if (z[zk]) pat += '<g clip-path="url(#z_' + zk + ')">' + patSvg + '</g>';
     });
