@@ -1,15 +1,22 @@
 window.PATTERNS = window.PATTERNS || {};
 window.PATTERNS.halftone = {
-  id: 'halftone',
-  label: 'Halftone',
-  rules: ['body'],
-  render: function(colour, W, H) {
+  id:             'halftone',
+  label:          'Halftone',
+  scope:          'both',
+  defaultOpacity: 0.22,
+  render: function(colour, W, H, opts) {
+    var sc      = (opts && opts.scale) || 1;
+    var spacing = 21 * sc;
+    var radius  = 4.5 * sc;
+    var offset  = spacing / 2;
+    var margin  = 800;
     var s = '';
-    for (var hy = 11; hy < H; hy += 21)
-      for (var hx = 11; hx < W; hx += 21) {
-        var o = (Math.floor(hy / 21) % 2) * 10.5;
-        s += '<circle cx="' + (hx + o) + '" cy="' + hy + '" r="4.5" fill="' + colour + '" opacity="0.22"/>';
-      }
+    var row = 0;
+    for (var hy = -margin; hy < H + margin; hy += spacing, row++) {
+      var o = (row % 2) * offset;
+      for (var hx = -margin; hx < W + margin; hx += spacing)
+        s += '<circle cx="' + (hx + o) + '" cy="' + hy + '" r="' + radius + '" fill="' + colour + '"/>';
+    }
     return s;
   }
 };

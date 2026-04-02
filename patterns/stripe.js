@@ -1,17 +1,22 @@
 /* Pattern: Stripe (SVG-generated)
- * Uses SVG shapes so it responds to the Sleeves colour picker.
- * rules: zones this pattern applies to by default.
- * To use a PNG instead, see chevron.js for the image-based approach.
+ * scope: 'body' | 'arms' | 'both'  — controls which zones receive this pattern.
+ * defaultOpacity: natural opacity (0–1) shown when pattern is first selected.
+ * render(colour, W, H, opts): opts.scale adjusts stripe width/spacing.
  */
 window.PATTERNS = window.PATTERNS || {};
 window.PATTERNS.stripe = {
-  id:    'stripe',
-  label: 'Stripe',
-  rules: ['body'],
-  render: function(colour, W, H) {
+  id:             'stripe',
+  label:          'Stripe',
+  scope:          'both',
+  defaultOpacity: 0.25,
+  render: function(colour, W, H, opts) {
+    var sc      = (opts && opts.scale) || 1;
+    var spacing = 56 * sc;
+    var width   = 28 * sc;
+    var margin  = 800;
     var s = '';
-    for (var x = 0; x < W; x += 56)
-      s += '<rect x="' + x + '" y="0" width="28" height="' + H + '" fill="' + colour + '" opacity="0.25"/>';
+    for (var x = -margin; x < W + margin; x += spacing)
+      s += '<rect x="' + x + '" y="' + (-margin) + '" width="' + width + '" height="' + (H + margin * 2) + '" fill="' + colour + '"/>';
     return s;
   }
 };

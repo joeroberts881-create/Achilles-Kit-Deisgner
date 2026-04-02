@@ -19,14 +19,28 @@ function redraw() {
   var tFaint = luma(pA) > 145 ? 'rgba(0,0,0,0.12)'   : 'rgba(255,255,255,0.18)';
 
   // Get active pattern
+  // scope: 'body' | 'arms' | 'both'  (set on each pattern definition)
+  var SCOPE_ZONES = { body: ['body'], arms: ['sleeveL', 'sleeveR'], both: ['body', 'sleeveL', 'sleeveR'] };
   var pat = '';
   var activePattern = window.PATTERNS && window.PATTERNS[S.style];
   if (activePattern) {
-    // Use pattern's own rules, or fall back to zone patternZones
-    var rules = activePattern.rules || z.patternZones || ['body'];
-    var patSvg = activePattern.render(pE, W, H);
+    var rules   = (activePattern.scope && SCOPE_ZONES[activePattern.scope])
+                  || activePattern.rules
+                  || z.patternZones
+                  || ['body'];
+    var opacity = (S.patOpacity !== undefined
+                    ? S.patOpacity
+                    : Math.round((activePattern.defaultOpacity || 0.25) * 100)) / 100;
+    var rotate  = S.patRotate  || 0;
+    var scale   = (S.patScale  !== undefined ? S.patScale : 100) / 100;
+    var cx = Math.round(W / 2), cy = Math.round(H / 2);
+    var patSvg = activePattern.render(pE, W, H, { scale: scale });
+    var inner = '<g'
+      + (rotate ? ' transform="rotate(' + rotate + ',' + cx + ',' + cy + ')"' : '')
+      + ' opacity="' + opacity + '">'
+      + patSvg + '</g>';
     rules.forEach(function(zk) {
-      if (z[zk]) pat += '<g clip-path="url(#z_' + zk + ')">' + patSvg + '</g>';
+      if (z[zk]) pat += '<g clip-path="url(#z_' + zk + ')">' + inner + '</g>';
     });
   }
 
@@ -84,17 +98,52 @@ function redraw() {
     }
     logSvg.innerHTML = lc;
   } else {
-    var pName = (document.getElementById('pName').value || '').toUpperCase();
-    var pNum  = document.getElementById('pNum').value || '';
-    var font  = document.getElementById('numFont').value;
-    var nfs   = pName.length > 10 ? Math.max(60, Math.floor(z.numberSize * 0.2 * (10 / pName.length))) : Math.floor(z.numberSize * 0.2);
+    var pName    = (document.getElementById('pName').value || '').toUpperCase();
+    var pNum     = document.getElementById('pNum').value || '';
+    var nameFont = document.getElementById('nameFont').value;
+    var numFont  = document.getElementById('numFont').value;
     var cx3   = Math.round(W / 2);
-    logSvg.innerHTML =
-      (pName
-        ? '<text x="'+cx3+'" y="'+z.nameY+'" text-anchor="middle" font-family="'+font+'" font-size="'+nfs+'" font-weight="900" letter-spacing="12" fill="'+tCol+'">'+pName+'</text>'
-        : '<text x="'+cx3+'" y="'+z.nameY+'" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="'+Math.floor(nfs*.65)+'" font-weight="700" fill="'+tFaint+'">PLAYER NAME</text>')
+    var baseNfs  = Math.floor(z.numberSize * 0.2 * ((S.nameScale || 100) / 100));
+    var numSize  = Math.round(z.numberSize * ((S.numScale || 100) / 100));
+    var nameMaxW = z.nameMaxW || Math.round(W * 0.58);
+
+    // Estimate rendered width of a string: Barlow Condensed ~0.55× font-size per char + letter-spacing
+    var estW = function(str, fs) { return str.length * (fs * 0.55 + 12); };
+    // Shrink font-size until string fits within nameMaxW (floor at minFs)
+    var fitFs = function(str) {
+      var fs = baseNfs;
+      while (fs > 50 && estW(str, fs) > nameMaxW) fs -= 2;
+      return fs;
+    };
+
+    var nameHtml;
+    if (pName) {
+      var words = pName.split(' ').filter(Boolean);
+      if (words.length > 1 && estW(pName, baseNfs) > nameMaxW) {
+        // Split into 2 lines at the most balanced word boundary
+        var bestSplit = 1, bestDiff = Infinity;
+        for (var wi = 1; wi < words.length; wi++) {
+          var d = Math.abs(words.slice(0, wi).join(' ').length - words.slice(wi).join(' ').length);
+          if (d < bestDiff) { bestDiff = d; bestSplit = wi; }
+        }
+        var ln1  = words.slice(0, bestSplit).join(' ');
+        var ln2  = words.slice(bestSplit).join(' ');
+        var nfs2 = Math.min(fitFs(ln1), fitFs(ln2));
+        var lh   = Math.round(nfs2 * 1.2);
+        nameHtml = '<text x="'+cx3+'" y="'+z.nameY+'" text-anchor="middle" font-family="'+nameFont+'" font-size="'+nfs2+'" font-weight="900" letter-spacing="12" fill="'+tCol+'">'+ln1+'</text>'
+                 + '<text x="'+cx3+'" y="'+(z.nameY+lh)+'" text-anchor="middle" font-family="'+nameFont+'" font-size="'+nfs2+'" font-weight="900" letter-spacing="12" fill="'+tCol+'">'+ln2+'</text>';
+      } else {
+        // Single line — shrink if needed
+        var nfs1 = fitFs(pName);
+        nameHtml = '<text x="'+cx3+'" y="'+z.nameY+'" text-anchor="middle" font-family="'+nameFont+'" font-size="'+nfs1+'" font-weight="900" letter-spacing="12" fill="'+tCol+'">'+pName+'</text>';
+      }
+    } else {
+      nameHtml = '<text x="'+cx3+'" y="'+z.nameY+'" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="'+Math.floor(baseNfs*.65)+'" font-weight="700" fill="'+tFaint+'">PLAYER NAME</text>';
+    }
+
+    logSvg.innerHTML = nameHtml
       + (pNum
-        ? '<text x="'+cx3+'" y="'+z.numberY+'" text-anchor="middle" font-family="'+font+'" font-size="'+z.numberSize+'" font-weight="900" fill="'+tCol+'">'+pNum+'</text>'
-        : '<text x="'+cx3+'" y="'+z.numberY+'" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="'+Math.round(z.numberSize*.7)+'" font-weight="900" fill="'+tFaint+'">0</text>');
+        ? '<text x="'+cx3+'" y="'+z.numberY+'" text-anchor="middle" font-family="'+numFont+'" font-size="'+numSize+'" font-weight="900" fill="'+tCol+'">'+pNum+'</text>'
+        : '<text x="'+cx3+'" y="'+z.numberY+'" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="'+Math.round(numSize*.7)+'" font-weight="900" fill="'+tFaint+'">0</text>');
   }
 }
