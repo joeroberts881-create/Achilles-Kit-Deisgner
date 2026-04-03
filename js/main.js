@@ -41,10 +41,15 @@ function captureSnapshot() {
   };
 }
 
+function saveToStorage() {
+  try { localStorage.setItem('achilles_kit', JSON.stringify(captureSnapshot())); } catch(e) {}
+}
+
 function pushUndo() {
   undoStack.push(captureSnapshot());
   if (undoStack.length > MAX_UNDO) undoStack.shift();
   updateUndoBtn();
+  saveToStorage();
 }
 
 function updateUndoBtn() {
@@ -138,6 +143,7 @@ function resetKit() {
     sponsorTxt: '' });
   undoStack = [];
   updateUndoBtn();
+  saveToStorage();
 }
 
 /* ── Section toggle ───────────────────────────────────── */
@@ -347,5 +353,12 @@ function setView(v) {
 
 /* ── Boot ─────────────────────────────────────────────── */
 buildPatternPreviews();
-updateNameCount();
-setView('front');
+
+(function() {
+  try {
+    var saved = localStorage.getItem('achilles_kit');
+    if (saved) { restoreSnapshot(JSON.parse(saved)); return; }
+  } catch(e) {}
+  updateNameCount();
+  setView('front');
+}());

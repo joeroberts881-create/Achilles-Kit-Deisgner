@@ -13,8 +13,8 @@
     <div class="panel-header"><div class="panel-logo">Achilles Sports</div><div class="panel-title">Kit Designer</div><div class="panel-tagline">Choose a shirt, pick your colours, add logos &amp; export.</div></div>
 
     <div class="sec" id="secShirt">
-      <div class="sec-head" onclick="toggleSec('secShirt')"><span class="sec-title">Shirt</span><span class="sec-arrow" id="arr-secShirt">&#9660;</span></div>
-      <div class="sec-body" id="body-secShirt">
+      <div class="sec-head" onclick="toggleSec('secShirt')"><span class="sec-title">Shirt</span><span class="sec-arrow open" id="arr-secShirt">&#9660;</span></div>
+      <div class="sec-body open" id="body-secShirt">
         <!-- Add new <option> here when you add a new shirt to shirts/ -->
         <select class="shirt-sel" id="shirtSelect" onchange="setShirt(this.value)">
           <option value="vneck">V-Neck</option>
@@ -45,8 +45,8 @@
     </div>
 
     <div class="sec" id="secColours">
-      <div class="sec-head" onclick="toggleSec('secColours')"><span class="sec-title">Colours</span><span class="sec-arrow open" id="arr-secColours">&#9660;</span></div>
-      <div class="sec-body open" id="body-secColours">
+      <div class="sec-head" onclick="toggleSec('secColours')"><span class="sec-title">Colours</span><span class="sec-arrow" id="arr-secColours">&#9660;</span></div>
+      <div class="sec-body" id="body-secColours">
         <span class="colour-lbl">Body</span>
         <div class="hex-row"><div class="color-preview" id="prevA" style="background:#ffffff;border:1.5px solid #ccc" onclick="document.getElementById('pickA').click()"></div><input class="hex-in" id="hexA" value="#ffffff" maxlength="7" oninput="onHex('A',this.value)"><input type="color" id="pickA" value="#ffffff" style="display:none" oninput="applyPick('A',this.value)"></div>
         <span class="colour-lbl">Sleeves</span>
@@ -117,18 +117,18 @@
         <button class="export-btn" onclick="exportKit()">Export Kit</button>
       </div>
     </div>
-    <div class="panel-toolbar">
-      <button class="tool-btn" id="undoBtn" onclick="undo()" disabled>&#8629; Undo</button>
-      <button class="tool-btn" id="resetBtn" onclick="resetKit()">&#8635; Reset</button>
-    </div>
   </div>
 
   <div class="canvas-area">
     <div class="canvas-header">
       <div class="canvas-logo">Achilles Sports — Kit Designer</div>
-      <div class="view-toggle">
-        <div class="vtog on" id="vFront" onclick="setView('front')">Front</div>
-        <div class="vtog" id="vBack"  onclick="setView('back')">Back</div>
+      <div class="canvas-header-right">
+        <div class="view-toggle">
+          <div class="vtog on" id="vFront" onclick="setView('front')">Front</div>
+          <div class="vtog" id="vBack"  onclick="setView('back')">Back</div>
+        </div>
+        <button class="tool-btn" id="undoBtn" onclick="undo()" disabled>&#8629; Undo</button>
+        <button class="tool-btn" id="resetBtn" onclick="resetKit()">&#8635; Reset</button>
       </div>
     </div>
     <div class="mockup-wrap" id="mockupWrap">
