@@ -47,17 +47,25 @@
     <div class="sec" id="secColours">
       <div class="sec-head" onclick="toggleSec('secColours')"><span class="sec-title">Colours</span><span class="sec-arrow" id="arr-secColours">&#9660;</span></div>
       <div class="sec-body" id="body-secColours">
-        <span class="colour-lbl">Body</span>
-        <div class="hex-row"><div class="color-preview" id="prevA" style="background:#ffffff;border:1.5px solid #ccc" onclick="document.getElementById('pickA').click()"></div><input class="hex-in" id="hexA" value="#ffffff" maxlength="7" oninput="onHex('A',this.value)"><input type="color" id="pickA" value="#ffffff" style="display:none" oninput="applyPick('A',this.value)"></div>
-        <span class="colour-lbl">Sleeves</span>
-        <div class="hex-row"><div class="color-preview" id="prevB" style="background:#ffffff" onclick="document.getElementById('pickB').click()"></div><input class="hex-in" id="hexB" value="#ffffff" maxlength="7" oninput="onHex('B',this.value)"><input type="color" id="pickB" value="#ffffff" style="display:none" oninput="applyPick('B',this.value)"></div>
-        <span class="colour-lbl">Sleeve Cuff</span>
-        <div class="hex-row"><div class="color-preview" id="prevC" style="background:#ffffff" onclick="document.getElementById('pickC').click()"></div><input class="hex-in" id="hexC" value="#ffffff" maxlength="7" oninput="onHex('C',this.value)"><input type="color" id="pickC" value="#ffffff" style="display:none" oninput="applyPick('C',this.value)"></div>
-        <span class="colour-lbl">Collar</span>
-        <div class="hex-row"><div class="color-preview" id="prevD" style="background:#ffffff" onclick="document.getElementById('pickD').click()"></div><input class="hex-in" id="hexD" value="#ffffff" maxlength="7" oninput="onHex('D',this.value)"><input type="color" id="pickD" value="#ffffff" style="display:none" oninput="applyPick('D',this.value)"></div>
-        <div id="patternColourRow" style="display:none">
-        <span class="colour-lbl">Pattern</span>
-        <div class="hex-row"><div class="color-preview" id="prevE" style="background:#000000" onclick="document.getElementById('pickE').click()"></div><input class="hex-in" id="hexE" value="#000000" maxlength="7" oninput="onHex('E',this.value)"><input type="color" id="pickE" value="#000000" style="display:none" oninput="applyPick('E',this.value)"></div>
+        <div class="col-sec">
+          <div class="col-sec-head" onclick="toggleColSec(this)"><span class="col-sec-lbl">Body</span><div class="color-preview light" id="prevA" style="background:#ffffff"></div><span class="col-sec-arrow">&#9660;</span></div>
+          <div class="col-sec-body"><div class="swatch-picker" id="sp-A" data-key="A"></div><div class="hex-row"><input class="hex-in" id="hexA" value="#ffffff" maxlength="7" oninput="onHex('A',this.value)" placeholder="#ffffff"><input type="color" id="pickA" value="#ffffff" style="display:none" oninput="applyPick('A',this.value)"></div></div>
+        </div>
+        <div class="col-sec">
+          <div class="col-sec-head" onclick="toggleColSec(this)"><span class="col-sec-lbl">Sleeves</span><div class="color-preview light" id="prevB" style="background:#ffffff"></div><span class="col-sec-arrow">&#9660;</span></div>
+          <div class="col-sec-body"><div class="swatch-picker" id="sp-B" data-key="B"></div><div class="hex-row"><input class="hex-in" id="hexB" value="#ffffff" maxlength="7" oninput="onHex('B',this.value)" placeholder="#ffffff"><input type="color" id="pickB" value="#ffffff" style="display:none" oninput="applyPick('B',this.value)"></div></div>
+        </div>
+        <div class="col-sec">
+          <div class="col-sec-head" onclick="toggleColSec(this)"><span class="col-sec-lbl">Sleeve Cuff</span><div class="color-preview light" id="prevC" style="background:#ffffff"></div><span class="col-sec-arrow">&#9660;</span></div>
+          <div class="col-sec-body"><div class="swatch-picker" id="sp-C" data-key="C"></div><div class="hex-row"><input class="hex-in" id="hexC" value="#ffffff" maxlength="7" oninput="onHex('C',this.value)" placeholder="#ffffff"><input type="color" id="pickC" value="#ffffff" style="display:none" oninput="applyPick('C',this.value)"></div></div>
+        </div>
+        <div class="col-sec">
+          <div class="col-sec-head" onclick="toggleColSec(this)"><span class="col-sec-lbl">Collar</span><div class="color-preview light" id="prevD" style="background:#ffffff"></div><span class="col-sec-arrow">&#9660;</span></div>
+          <div class="col-sec-body"><div class="swatch-picker" id="sp-D" data-key="D"></div><div class="hex-row"><input class="hex-in" id="hexD" value="#ffffff" maxlength="7" oninput="onHex('D',this.value)" placeholder="#ffffff"><input type="color" id="pickD" value="#ffffff" style="display:none" oninput="applyPick('D',this.value)"></div></div>
+        </div>
+        <div class="col-sec" id="patternColourRow" style="display:none">
+          <div class="col-sec-head" onclick="toggleColSec(this)"><span class="col-sec-lbl">Pattern</span><div class="color-preview" id="prevE" style="background:#000000"></div><span class="col-sec-arrow">&#9660;</span></div>
+          <div class="col-sec-body"><div class="swatch-picker" id="sp-E" data-key="E"></div><div class="hex-row"><input class="hex-in" id="hexE" value="#000000" maxlength="7" oninput="onHex('E',this.value)" placeholder="#000000"><input type="color" id="pickE" value="#000000" style="display:none" oninput="applyPick('E',this.value)"></div></div>
         </div>
       </div>
     </div>

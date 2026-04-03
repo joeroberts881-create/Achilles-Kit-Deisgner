@@ -65,12 +65,13 @@ function restoreSnapshot(snap) {
   document.getElementById('numFont').value    = snap.numFont;
   document.getElementById('sponsorTxt').value = snap.sponsorTxt;
 
-  // hex inputs + colour pickers + previews
+  // hex inputs + colour pickers + previews + swatch highlights
   ['A','B','C','D','E'].forEach(function(k) {
     var v = S['col' + k];
     document.getElementById('hex' + k).value             = v;
     document.getElementById('prev' + k).style.background = v;
     document.getElementById('pick' + k).value            = v;
+    updateSwatchSelection(k, v);
   });
 
   // sliders + value labels
@@ -147,6 +148,14 @@ function resetKit() {
 }
 
 /* ── Section toggle ───────────────────────────────────── */
+function toggleColSec(head) {
+  var body  = head.nextElementSibling;
+  var arrow = head.querySelector('.col-sec-arrow');
+  var open  = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  arrow.classList.toggle('open', !open);
+}
+
 function toggleSec(id) {
   var b = document.getElementById('body-' + id);
   var a = document.getElementById('arr-' + id);
@@ -162,6 +171,7 @@ function onHex(k, v) {
     S['col' + k] = v;
     document.getElementById('prev' + k).style.background = v;
     document.getElementById('pick' + k).value = v;
+    updateSwatchSelection(k, v);
     redraw();
   }
 }
@@ -171,6 +181,7 @@ function applyPick(k, v) {
   S['col' + k] = v;
   document.getElementById('hex' + k).value             = v;
   document.getElementById('prev' + k).style.background = v;
+  updateSwatchSelection(k, v);
   redraw();
 }
 
@@ -351,8 +362,79 @@ function setView(v) {
   redraw();
 }
 
+/* ── Colour swatches ──────────────────────────────────── */
+var SWATCHES = [
+  // Whites & greys
+  '#FFFFFF','#F5F5F5','#CCCCCC','#999999','#666666','#333333','#1A1A1A','#000000',
+  // Reds
+  '#FF0000','#CC0000','#990000','#CC2200','#E83030','#FF6666',
+  // Oranges & ambers
+  '#FF6600','#FF8800','#FFAA00','#E87722',
+  // Yellows
+  '#FFDD00','#FFE851','#F5D000',
+  // Greens
+  '#006600','#008800','#00AA00','#33CC33','#00CC66','#007A4D','#003320',
+  // Blues
+  '#003087','#0047AB','#1E4FA3','#005EB8','#00AEEF','#6CADDF','#C8E6F5',
+  // Navy & dark blues
+  '#001F5B','#0A1E5E','#002366',
+  // Purples
+  '#4B0082','#6A0DAD','#9B59B6','#C39BD3',
+  // Pinks
+  '#FF69B4','#FF1493','#CC0066',
+  // Maroon & burgundy
+  '#800000','#6D1A36','#A0174C',
+  // Browns & golds
+  '#8B4513','#C9A84C','#FFD700','#B8860B',
+  // Sky & light blues
+  '#87CEEB','#56A0D3','#4169E1',
+  // Kit whites with tint
+  '#F0F4FF','#E8EEF8'
+];
+
+// Colours that need a dark border so they're visible on the light background
+var LIGHT_SWATCHES = new Set(['#FFFFFF','#F5F5F5','#F0F4FF','#E8EEF8','#C8E6F5','#FFE851','#FFDD00','#F5D000','#CCCCCC']);
+
+function buildSwatches() {
+  document.querySelectorAll('.swatch-picker').forEach(function(container) {
+    var key = container.dataset.key;
+    SWATCHES.forEach(function(hex) {
+      var el = document.createElement('div');
+      el.className = 'swatch' + (LIGHT_SWATCHES.has(hex) ? ' light' : '');
+      el.style.background = hex;
+      el.title = hex;
+      el.addEventListener('click', function() {
+        pushUndo();
+        S['col' + key] = hex;
+        document.getElementById('hex'  + key).value             = hex;
+        document.getElementById('prev' + key).style.background  = hex;
+        document.getElementById('pick' + key).value             = hex;
+        updateSwatchSelection(key, hex);
+        redraw();
+      });
+      container.appendChild(el);
+    });
+  });
+}
+
+function updateSwatchSelection(key, hex) {
+  var container = document.getElementById('sp-' + key);
+  if (!container) return;
+  container.querySelectorAll('.swatch').forEach(function(el) {
+    el.classList.toggle('selected', el.style.background === hexToRgbStyle(hex) || el.title.toUpperCase() === hex.toUpperCase());
+  });
+}
+
+function hexToRgbStyle(hex) {
+  var r = parseInt(hex.slice(1,3),16);
+  var g = parseInt(hex.slice(3,5),16);
+  var b = parseInt(hex.slice(5,7),16);
+  return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+}
+
 /* ── Boot ─────────────────────────────────────────────── */
 buildPatternPreviews();
+buildSwatches();
 
 (function() {
   try {
